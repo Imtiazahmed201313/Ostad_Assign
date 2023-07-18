@@ -8,137 +8,181 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Product List',
-      home: ProductList(),
+      title: 'Orientation Example',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: OrientationPage(),
     );
   }
 }
 
-class ProductList extends StatefulWidget {
-  @override
-  _ProductListState createState() => _ProductListState();
-}
-
-class _ProductListState extends State<ProductList> {
-  List<Product> products = [
-    Product(name: 'Product 1', price: 10),
-    Product(name: 'Product 2', price: 20),
-    Product(name: 'Product 3', price: 32),
-    Product(name: 'Product 4', price: 81),
-    Product(name: 'Product 5', price: 54),
-    Product(name: 'Product 6', price: 93),
-    Product(name: 'Product 7', price: 23),
-    Product(name: 'Product 8', price: 59),
-    Product(name: 'Product 9', price: 82),
-    Product(name: 'Product 10', price: 75),
-    Product(name: 'Product 11', price: 37),
-    Product(name: 'Product 12', price: 30),
-    Product(name: 'Product 13', price: 79),
-    Product(name: 'Product 14', price: 38),
-    Product(name: 'Product 15', price: 74),
-  ];
-
+class OrientationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Product List'),
-        centerTitle: true,
+        title: Text('Orientation Example'),
       ),
-      body: ListView.builder(
-        itemCount: products.length,
-        itemBuilder: (context, index) {
-          return ProductItem(
-            product: products[index],
-            onBuyNowPressed: () {
-              setState(() {
-                products[index].incrementCounter();
-                if (products[index].counter == 5) {
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: Text('Congratulations!'),
-                      content: Text('You\'ve bought 5 ${products[index].name}!'),
-                      actions: [
-                        TextButton(
-                          child: Text('OK'),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                      ],
+      body: OrientationBuilder(
+        builder: (BuildContext context, Orientation orientation) {
+          return orientation == Orientation.portrait
+              ? buildPortraitLayout()
+              : buildLandscapeLayout();
+        },
+      ),
+    );
+  }
+
+  Widget buildPortraitLayout() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        SizedBox(height: 20),
+        CircleAvatar(
+          radius: 150,
+          backgroundImage: AssetImage('assets/images/avatar.png'),
+        ),
+        SizedBox(height: 20),
+        Text(
+          'Hello, World!',
+          style: TextStyle(fontSize: 20),
+        ),
+        SizedBox(height: 20),
+        Text(
+          'This is my assignment.',
+          style: TextStyle(fontSize: 25),
+        ),
+        SizedBox(height: 20),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: GridView.count(
+              crossAxisCount: 2,
+              children: [
+                GridTile(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      color: Colors.grey,
+                      child: Center(child: Text('Item 1')),
                     ),
-                  );
-                }
-              });
-            },
-          );
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: (){
-          Navigator.push(context, MaterialPageRoute(builder: (context)=> CartPage(products: products)));
-        },
-        child: Icon(Icons.shopping_cart),
-      ),
-    );
-  }
-}
-
-class Product {
-  String name;
-  double price;
-  int counter;
-
-  Product({required this.name, required this.price, this.counter = 0});
-
-  void incrementCounter() {
-    counter++;
-  }
-}
-
-class ProductItem extends StatelessWidget {
-  late final Product product;
-  late final VoidCallback onBuyNowPressed;
-
-  ProductItem({required this.product, required this.onBuyNowPressed});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(product.name),
-      subtitle: Text('\$${product.price.toStringAsFixed(2)}'),
-      trailing: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text('Count: ${product.counter}'),
-          ElevatedButton(
-            onPressed: onBuyNowPressed,
-            child: Text('Buy Now'),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: GridTile(
+                    child: Container(
+                      color: Colors.grey,
+                      child: Center(child: Text('Item 2')),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: GridTile(
+                    child: Container(
+                      color: Colors.grey,
+                      child: Center(child: Text('Item 3')),
+                    ),
+                  ),
+                ),
+                GridTile(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      color: Colors.grey,
+                      child: Center(child: Text('Item 4')),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
-}
 
-class CartPage extends StatelessWidget {
-  final List<Product> products;
-
-  CartPage({required this.products});
-
-  @override
-  Widget build(BuildContext context) {
-    int totalProducts = products.fold(0, (sum, product) => sum + product.counter);
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Cart'),
-      ),
-      body: Center(
-        child: Text('Total Products: $totalProducts'),
-      ),
+  Widget buildLandscapeLayout() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.all(20),
+          child: CircleAvatar(
+            radius: 150,
+            backgroundImage: AssetImage('assets/images/avatar.png'),
+          ),
+        ),
+        Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(height: 20),
+              Text(
+                'Hello, World!',
+                style: TextStyle(fontSize: 20),
+              ),
+              SizedBox(height: 20),
+              Text(
+                'This is my assignment.',
+                style: TextStyle(fontSize: 25),
+              ),
+              SizedBox(height: 20),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: GridView.count(
+                    crossAxisCount: 2,
+                    children: [
+                      GridTile(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            color: Colors.grey,
+                            child: Center(child: Text('Item 1')),
+                          ),
+                        ),
+                      ),
+                      GridTile(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            color: Colors.grey,
+                            child: Center(child: Text('Item 2')),
+                          ),
+                        ),
+                      ),
+                      GridTile(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            color: Colors.grey,
+                            child: Center(child: Text('Item 3')),
+                          ),
+                        ),
+                      ),
+                      GridTile(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            color: Colors.grey,
+                            child: Center(child: Text('Item 4')),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
